@@ -1,0 +1,193 @@
+\documentclass[letterpaper,12pt]{article}
+    %% Always use 12pt - it is much easier to read
+    %% Things written after '%' sign, are ignored by the latex editor - they are how to introduce comments into your .tex source
+    %% Anything mathematics related should be put in between '$' signs.
+    
+    %% Set some names and numbers here so we can use them below
+    \newcommand{\myname}{Calvin Jia Hao Chen} %%%%%%%%%%%%%%% ---------> Change this to your name
+    \newcommand{\mynumber}{c5h1b} %%%%%%%%%%%%%%% ---------> Change this to your student number
+    \newcommand{\hw}{1} %%%%%%%%%%%%%%% --------->  set this to the homework number
+    
+    %%%%%%
+    %% There is a bit of stuff below which you should not have to change
+    %%%%%%
+    
+    %% AMS mathematics packages - they contain many useful fonts and symbols.
+    \usepackage{amsmath, amsfonts, amssymb}
+    
+    %% The geometry package changes the margins to use more of the page, I suggest
+    %% using it because standard latex margins are chosen for articles and letters,
+    %% not homework.
+    \usepackage[paper=letterpaper,left=25mm,right=25mm,top=3cm,bottom=25mm]{geometry}
+    %% For details of how this package work, google the ``latex geometry documentation''.
+    
+    %%
+    %% Fancy headers and footers - make the document look nice
+    \usepackage{fancyhdr} %% for details on how this work, search-engine ``fancyhdr documentation''
+    \pagestyle{fancy}
+    %%
+    %% The header
+    \lhead{CPSC 340} % course name as top-left
+    \chead{Assignment \hw} % homework number in top-centre
+    \rhead{ \myname \\ \mynumber }
+    %% This is a little more complicated because we have used `` \\ '' to force a line-break between the name and number.
+    %%
+    %% The footer
+    \lfoot{\myname} % name on bottom-left
+    \cfoot{Page \thepage} % page in middle
+    \rfoot{\mynumber} % student number on bottom-right
+    %%
+    %% These put horizontal lines between the main text and header and footer.
+    \renewcommand{\headrulewidth}{0.4pt}
+    \renewcommand{\footrulewidth}{0.4pt}
+    %%%
+    
+    %%%%%%
+    %% We shouldn't have to change the stuff above, but if you want to add some newcommands and things like that, then putting them between here and the ``\begin{document}'' is a good idea.
+    %%%%%%
+    %% A useful command to define is
+    %% This command will make the left and right braces as tall as needed. Use it as \set{1,2,3}
+    \newcommand{\set}[1]{\left\{ #1 \right\}}
+    %% We also redfine the negation symbol:
+    \renewcommand{\neg}{\sim}
+    
+    \begin{document}
+    \section*{Solutions to Assignment 1:}
+    
+    
+    \section{Linear Algebra}
+    \subsection{Basic Operations}
+    \begin{enumerate}
+    %% This is where your actual homework will go.
+     \item 14
+     \item 0
+     \item \[
+        \left[\begin{array}{c}
+        2\\
+        6\\
+        2\\
+        \end{array}\right], \quad
+    \]
+     \item $\sqrt{5}$
+    \item \[
+        \left[\begin{array}{c}
+        6\\
+        5\\
+        7\\
+        \end{array}\right], \quad
+    \]
+    \item \[
+        \left[\begin{array}{c}
+        19\\
+        \end{array}\right], \quad
+    \]
+    \end{enumerate}
+    \subsection{Matrix Algebra Rules}
+    \begin{enumerate}
+        \item false, because although the values are the same, the LHS returns a matrix while the RHS returns a value
+        \item false, because although the values are the same, the LHS returns a matrix while the RHS returns a value
+        \item false
+        \item false
+        \item false 
+        \item true
+        \item false
+        \item true
+        \item true
+        \item false
+    \end{enumerate}
+    
+    \section{Probability}
+    \subsection{Rules of probability}
+    \begin{enumerate}
+        \item \$5
+        \item 0.55
+        \item 0.2475
+    \end{enumerate}
+    \subsection{Bayes Rule and Conditional Probability}
+    \begin{enumerate}
+    \item 0.010096
+    \item false positives
+    \item 0.00960777
+    \item No 
+    \item find the feature to split on that would give you the best probability on the drug test
+    \end{enumerate}
+    
+    \section{Calculus}
+    \subsection{One-variable derivatives}
+    \begin{enumerate}
+    \item $f'(x) = 6x - 2.$
+    \item $f'(x) = 1-2x$
+    \item $f'(x) = 1-\frac{\exp(-x)}{1 + \exp(-x)}.$
+    \end{enumerate}
+
+    \subsection{Multi-variable derivatives}
+    \begin{enumerate}
+    \item $<2x_1 + \exp(x_1 + 2x_2), 2\exp(x_1 + 2x_2) >$
+    \item $<\frac{\exp(x_1)}{Z}, \frac{\exp(x_2)}{Z}, \frac{\exp(x_3)}{Z} >$
+    \item $<a_1, a_2, a_3>$
+    \item $<2x_1 - x_2, 2x_2 - x_1>$
+    \item $<x_1, x_2, x_3, ... , x_d>$
+    \end{enumerate}
+    
+    \subsection{Optimization}
+    \begin{enumerate}
+        \item $f(x) = 4.25$
+        \item $f(x) = 0.25$
+        \item $f(x) = 0$
+        \item $x = 0, 1$
+        \item $f(x_1, x_2) = 1$
+        \item $x_1 = 0, x_2 = 0$
+    \end{enumerate}
+
+    \section{Algorithms and Data Structures Review}
+    \subsection{Trees}
+    \begin{enumerate}
+        \item 6
+        \item 5
+    \end{enumerate}
+
+    \subsection{Common Runtimes}
+    \begin{enumerate}
+        \item $O(n)$
+        \item $O(\log n)$
+        \item $O(n)$
+        \item $O(d)$
+        \item $O(d^2)$
+    \end{enumerate}
+
+    \subsection{Running times of code}
+    \begin{enumerate} 
+        \item $O(n)$
+        \item $O(n)$
+        \item $O(1)$
+        \item $O(n)$
+        \item $O(n^2)$
+    \end{enumerate}
+
+    \section{Data Exploration}
+    \subsection{Summary Statistics}
+    \begin{enumerate}
+        \item maximum = 4.862, minimum = 0.352, median = 1.177, mean = 1.324625, mode = 0.77
+        \item $5\% = 0.466, 25\% = 0.72, 50\% = 1.177, 75\% = 1.8145, 95\% = 2.646$
+        \item highest mean and variance = WtdILI, lowest mean and variance = Pac
+        \item No, because the values are quantitative and the current mode just appears the most. If we want to give an accurate "common" value, we can use the median because most of the values are similar to it.
+    \end{enumerate}
+
+    \subsection{Data Visualization}
+    \begin{enumerate}
+        \item Plot C: histogram showing only the columns (regions) of the dataset
+        \item Plot D: histogram that displays ALL the values
+        \item Plot B: Boxplot that has an x-axis in weeks
+        \item Plot A: y-axis shows the illness percentage
+        \item Plot F: scatterplot that has a better linear distribution which means better correlation
+        \item Plot E: scatterplot where points show a slight linear distribution which means its less correlated
+    \end{enumerate}
+
+    \section{Decision Trees}
+    \subsection{Splitting rule}
+    \begin{description} Equality-based splitting rule would make sense for categorical features. For example, there was a feature that determined whether or not you were male, then it would make more sense to use an equality based split rather than a threshhold split \end{description}
+    
+    \subsection{Comparing Implementations}
+    \begin{description} If both the error rate and the depth are the same for both approaches, the implementations should be the same. Since the curve is the same, the implementations for the condition each stump splits upon should be the same. There may be the algorithm to iterate through the dataset and implementation can vary but they should be the same if the iteration approach is the same.
+    %% Anything that comes after the ``\end{document}'' will be ignored, not just by us but by the latex editor too.
+    \end{document}

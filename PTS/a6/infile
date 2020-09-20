@@ -1,0 +1,242 @@
+1.1
+most_reviewed = item_inverse_mapper[np.argmax(np.sum(X!=0,axis=0))]
+print("Most reviewed:", url_amazon % most_reviewed)
+
+most_stars = item_inverse_mapper[np.argmax(np.sum(X,axis=0))]
+print("Most stars   :", url_amazon % most_stars)
+
+highest_avg = item_inverse_mapper[np.argmax(np.sum(X,axis=0)/np.sum(X!=0,axis=0))]
+print("Highest avg  :", url_amazon % highest_avg)
+
+1.2
+plt.hist(X.getnnz(axis=1));
+plt.yscale('log', nonposy='clip')
+plt.title('Ratings per user');
+
+plt.hist(X.getnnz(axis=0));
+plt.yscale('log', nonposy='clip');
+plt.title('Ratings per item');
+
+plt.hist(np.array(X[X!=0]).flatten(), bins=np.arange(0.5,6));
+plt.title("All ratings");
+print("Average rating overall:", np.mean(X[X!=0]))
+
+1.3 
+def find_nn(model, X, query_ind):
+    model.fit(X) 
+    X_query = X[query_ind] if X[query_ind].ndim==2 else X[query_ind][None] # nonsense needed for non-sparse X
+    _, inds = model.kneighbors(X_query) 
+    return [ind for ind in inds[0] if ind != query_ind] # don't return yourself as a neighbour
+
+euc_items = find_nn(NearestNeighbors(n_neighbors=6), X.T, grill_brush_ind)
+
+for i in euc_items:
+    print(url_amazon % item_inverse_mapper[i])
+
+1.4
+cos_items = find_nn(NearestNeighbors(n_neighbors=6, metric='cosine'), X.T, grill_brush_ind)
+
+for i in cos_items:
+    print(url_amazon % item_inverse_mapper[i])
+
+1.5
+print([np.sum(X[:,i]) for i in euc_items])
+print([np.sum(X[:,i]) for i in cos_items])
+
+1.6
+svd = TruncatedSVD(n_components=10)
+
+Z = svd.fit_transform(X)
+W = svd.components_
+
+svd_items = find_nn(NearestNeighbors(n_neighbors=6), W.T, grill_brush_ind)
+
+for i in svd_items:
+    print(url_amazon % item_inverse_mapper[i])
+
+2
+df = pd.read_excel(os.path.join("..","data","default of credit card clients.xls"))
+
+df.head()
+
+df.columns = df.loc["ID"].values
+df = df.drop(index="ID")
+df = df.rename(columns={"default payment next month":"y"})
+df.head()
+
+df = df.apply(pd.to_numeric)
+
+Summary statistics
+print("Fraction that default", df["y"].values.mean())
+
+print("n=%d, d=%d" % df.shape)
+
+np.max(df,axis=0)
+
+np.min(df,axis=0)
+
+sns.jointplot(x="BILL_AMT1", y="PAY_AMT1", data=df);
+
+sns.barplot(x="EDUCATION", y="y", data=df);
+
+Split the data
+X = df.drop(columns=["y"])
+y = df["y"].values
+
+def split_data(X, y):
+    X_trainvalid, X_test, y_trainvalid, y_test = train_test_split(X, y, train_size=0.8, random_state=1)
+    X_train, X_valid, y_train, y_valid = train_test_split(X_trainvalid, y_trainvalid, train_size=0.75, random_state=1)
+
+    print("Number of training examples:", len(y_train))
+    print("Number of validation examples:", len(y_valid))
+    print("Number of test examples:", len(y_test))
+    
+    return X_train, y_train, X_valid, y_valid, X_trainvalid, y_trainvalid, X_test, y_test
+
+X_train, y_train, X_valid, y_valid, X_trainvalid, y_trainvalid, X_test, y_test = split_data(X,y)
+
+Baselines
+dummy = DummyClassifier()
+dummy.fit(X_train, y_train)
+def show_scores(model):
+    print("Training error:   %.2f" % (1-model.score(X_train, y_train)))
+    print("Validation error: %.2f" % (1-model.score(X_valid, y_valid)))
+    
+show_scores(dummy)
+
+lr = LogisticRegression()
+lr.fit(X_train, y_train)
+show_scores(lr)
+
+def sweep_hyper(model, hyper, val_range):
+    train_errors = []
+    valid_errors = []
+    for val in val_range:
+        m = model(**{hyper:val})
+        m.fit(X_train, y_train)
+        train_errors.append(1-m.score(X_train,y_train))
+        valid_errors.append(1-m.score(X_valid,y_valid))
+    plt.semilogx(C_range, train_errors, label="train")
+    plt.semilogx(C_range, valid_errors, label="valid")
+    plt.legend();
+    plt.xlabel(hyper)
+    plt.ylabel("error rate")
+C_range = 10.0**np.arange(-3,3)
+sweep_hyper(LogisticRegression, "C", C_range)
+
+lr = LogisticRegression()
+lr.fit(X_train, y_train)
+
+lr.predict(X_train)
+
+np.bincount(lr.predict(X_train))
+
+Feature engineerin/preprocessing 
+df.columns
+
+df.head()
+
+df_cat = pd.get_dummies(df, columns=['MARRIAGE'], drop_first=True)
+df_cat.head()
+
+X = df_cat.drop(columns=["y"])
+y = df_cat["y"].values
+
+X_train, y_train, X_valid, y_valid, X_trainvalid, y_trainvalid, X_test, y_test = split_data(X,y)
+lr = LogisticRegression()
+lr.fit(X_train, y_train)
+show_scores(lr)
+
+scaler = StandardScaler()
+X = scaler.fit_transform(X)
+
+X_train, y_train, X_valid, y_valid, X_trainvalid, y_trainvalid, X_test, y_test = split_data(X,y)
+
+lr = LogisticRegression()
+lr.fit(X_train, y_train)
+show_scores(lr)
+
+np.mean(lr.predict(X_train))
+
+sweep_hyper(LogisticRegression, "C", C_range)
+
+Other models 
+models = {'RBF SVM' : SVC, 
+          'neural net' : MLPClassifier, 
+          'random forest' : RandomForestClassifier, 
+          'xgboost' : xgb.XGBClassifier}
+for model_name, model_class in models.items():
+    t = time.time()
+    print(model_name, ":")
+    m = model_class()
+    m.fit(X_train, y_train)
+    show_scores(m)
+    elapsed_time = time.time() - t
+    print("Elapsed time: %.1f s" % elapsed_time)
+    print()
+
+Hyperparameter Optimization
+import warnings
+warnings.filterwarnings("ignore")
+
+param_grid = {'n_estimators' : [3, 5, 10], 
+              'learning_rate' : [0.01, 0.1], 
+              'max_depth' : [3, 5, 6], 
+              'subsample' : [0.5, 0.75, 1], 
+              'colsample_bytree' : [0.5, 0.75, 1]}
+xgb_gridsearch = GridSearchCV(estimator=xgb.XGBClassifier(), param_grid=param_grid)
+print("Number of configurations:", np.prod(list(map(len, param_grid.values()))))
+
+xgb_gridsearch.fit(X_trainvalid, y_trainvalid);
+
+show_scores(xgb_gridsearch)
+
+xgb_gridsearch.best_params_
+
+nn_param_grid = {'hidden_layer_sizes' : [(50,), (10,), (10,10)], 
+              'learning_rate_init' : [1e-4, 1e-3, 1e-2], 
+              'alpha' : [1e-5, 1e-4, 1e-3], 
+              'activation' : ['relu', 'tanh']}
+nn_gridsearch = GridSearchCV(estimator=MLPClassifier(), param_grid=nn_param_grid)
+print("Number of configurations:", np.prod(list(map(len, nn_param_grid.values()))))
+
+nn_gridsearch.fit(X_trainvalid, y_trainvalid);
+
+show_scores(nn_gridsearch)
+
+nn_gridsearch.best_params_
+
+Feature Selection 
+lr = LogisticRegression()
+lr.fit(X_train, y_train)
+coefs_dict = {df_cat.drop(columns=["y"]).columns[i] : lr.coef_[0,i] for i in range(X_train.shape[1])}
+coefs_series = pd.Series(coefs_dict)
+coefs_series.sort_values()
+
+Final model
+clf = xgb_gridsearch.best_estimator_
+clf.fit(X_trainvalid, y_trainvalid)
+print("Test error: %.2f" % (1-clf.score(X_test, y_test)))
+
+Other ideas
+The BILL_AMT* and PAY_AMT* variables are the bill amount, and amount paid, respectively. We could try making new features by subtracting or otherwise combining these, which would be the amount you paid relative to the amount owed.
+More data cleaning would probably help. In my opinion data cleaning and feature engineering are very important here.
+We could try L1 regularization or forward/backward selection to improve the feature analysis.
+
+3 [Questions]
+Why is it difficult for a standard collaborative filtering model to make good predictions for new items?
+Consider a fully connected neural network with layer sizes (10,20,20,5); that is, the input dimensionality is 10, there are two hidden layers each of size 20, and the output dimensionality is 5. How many parameters does the network have, including biases?
+Why do we need nonlinear activation functions in neural networks?
+Assuming we could globally minimize the neural network objectve, how does the depth of a neural network affect the fundamental trade-off?
+List 3 forms of regularization we use to prevent overfitting in neural networks.
+Assuming we could globally minimize the neural network objectve, how would the size of the filters in a convolutational neural network affect the fundamental trade-off?
+Why do people say convolutional neural networks just a special case of a fully-connected (regular) neural networks? What does this imply about the number of learned parameters?
+
+3 [Answers]
+Because standard collaborative filtering models rely only on rating data to make predictions, and a new item has few/no ratings available in the user-item rating matrix.
+
+Because if all layers were linear, the whole neural net would be a linear function.
+As the network gets deeper the training error will go down but the approximation error will go up.
+Examples include: standard regularization of the weights, early stopping, dropout, restricting the width/depth, weight tying, sparsity of the weights, using convolutions, and using pure stochastic gradient.
+As the size grows the training error will go down but the approximation error will go up.
+Because you can write them that way, where the weight matrices have a particular pattern of sparsity and tied (repeated) weights. This reduces the number of parameters.
